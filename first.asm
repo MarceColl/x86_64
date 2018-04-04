@@ -57,6 +57,10 @@ _start:
 	call	print_int
 	call	print_nl
 
+	mov 	rdi, 1234
+	call	putint
+	call	print_nl
+
 	popaq
 	mov	rdi, 0
 	mov	rax, 60
