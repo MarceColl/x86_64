@@ -70,6 +70,7 @@ putint:
 	mov	r8, rdi
 	mov	r10, putint_buff
 
+; Find out how long the number is
 .while_length:
 	cmp	r8, 0
 	jz	short .endwhile_length
@@ -83,10 +84,11 @@ putint:
 	
 	jmp	short .while_length
 .endwhile_length:
-	mov 	byte [r10], 0
 
+	mov 	byte [r10], 0		; End the string with a null terminator
 	mov	r8, rdi
 
+; Fill the buffer to print with the number, starting from the LSD
 .while:
 	cmp	r8, 0
 	jz	short .endwhile
@@ -98,13 +100,13 @@ putint:
 	div	rcx
 
 	mov	r8, rax 
-	add	dl, 48
+	add	dl, 48			; From number to ascii digit
 	mov	byte [r10], dl
 	
 	jmp	short .while
 .endwhile:
 
-	mov	rdi, putint_buff
+	mov	rdi, putint_buff	; Print the resulting string from the buffer
 	call	putstr
 
 	popaq
