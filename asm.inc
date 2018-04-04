@@ -1,0 +1,2 @@
+extrn strlen
+extrn putstr
