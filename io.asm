@@ -1,8 +1,13 @@
+;
 ; asmsyntax=fasm
 ;
 ; Marce Coll <marce@dziban.net>
 ;
 ; IO routines to use with assembly without having to link with glibc
+;
+; TODO(Marce): Ability to read and write signed ints
+; TODO(Marce): Ability to read and write floats and doubles
+; WOULDBENICE(Marce): Some kind of printf and scanf formated print
 ;
 format ELF64
 
@@ -16,12 +21,12 @@ section '.bss'
 io_buff		rb	100
 
 section '.text'
-	public putstr
+	public print_str 
 	public strlen
-	public putuint
-	public printnl
-	public readstr
-	public readuint
+	public print_uint 
+	public print_nl
+	public read_str
+	public read_uint
 ;
 ; Calculates the length of a string
 ; rdi - string pointer
@@ -53,7 +58,7 @@ strlen:
 ;
 ; TODO(Marce): Error management
 ;
-putstr:
+print_str:
 	pushaq
 
 	push	rdi
@@ -70,7 +75,7 @@ putstr:
 	popaq
 	ret
 
-printnl:
+print_nl:
 	pushaq
 
 	mov	rax, 1
@@ -85,8 +90,8 @@ printnl:
 dbg:
 	pushaq
 	mov	rdi, debug_text
-	call	putstr
-	call	printnl
+	call	print_str
+	call	print_nl
 	popaq
 	ret
 
@@ -97,7 +102,7 @@ dbg:
 ; TODO(Marce): Improve this procedure, make it more efficient
 ; TODO(Marce): Error management
 ;
-putuint:
+print_uint:
 	pushaq
 
 	mov	r9, rdi
@@ -138,21 +143,21 @@ putuint:
 	jnz	short .while
 .endwhile:
 	mov	rdi, io_buff		; Print the resulting string from the buffer
-	call	putstr
+	call	print_str
 
 	popaq
 	ret
 
 ;
 ; Read string from stdin into a buffer that is passed as argument
-; rdi - buffer where to put the string
+; rdi - buffer where to load the string
 ; rsi - max size of buffer
 ;
 ; returns number of bytes read
 ;
 ; TODO(Marce): Error management
 ;
-readstr:
+read_str:
 	pushaq
 	
 	mov	r8, rdi			; save buffer for null terminating the string later
@@ -176,12 +181,12 @@ readstr:
 ; TODO(Marce): Vectorize the addition
 ; TODO(Marce): Error management
 ; 
-readuint:
+read_uint:
 	pushaq
 	
 	mov	rdi, io_buff	
 	mov	rsi, 100
-	call	readstr
+	call	read_str
 
 	mov	r12, rax		; number of bytes read
 	sub	r12, 1			; minus the \n
