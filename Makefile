@@ -1,6 +1,6 @@
 ASM=fasm
 LD=ld
-LFLAGS=-melf_x86_64 --dynamic-linker=/usr/lib/ld-linux-x86-64.so.2 
+LFLAGS=-melf_x86_64 
 
 .PHONY: all clean
 
@@ -10,17 +10,17 @@ prime: prime.asm asm_io.o Makefile
 	$(ASM) prime.asm
 	$(LD) -o prime prime.o $(LFLAGS)
 
-first_static: first.asm asm_io.o common.inc io.o vector.o Makefile
+first_static: first.asm common.inc io.o vector.o Makefile
 	$(ASM) first.asm
 	$(LD) -o first_static first.o io.o vector.o $(LFLAGS)
 
 first_pic: first.asm asm_io.o common.inc io.o vector.o Makefile
 	$(ASM) first.asm
-	$(LD) -o first_pic first.o io.o vector.o $(LFLAGS) --pic-executable
+	$(LD) -o first_pic first.o io.o vector.o $(LFLAGS) --pic-executable --dynamic-linker=/usr/lib/ld-linux-x86-64.so.2 
 
 first_libc: first.asm asm_io.o common.inc io.o vector.o Makefile
 	$(ASM) first.asm
-	$(LD) -o first_libc first.o io.o vector.o $(LFLAGS) -lc
+	$(LD) -o first_libc first.o io.o vector.o $(LFLAGS) -lc --dynamic-linker=/usr/lib/ld-linux-x86-64.so.2 
 
 minimal: minimal.asm
 	$(ASM) minimal.asm
